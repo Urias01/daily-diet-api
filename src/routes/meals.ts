@@ -178,4 +178,62 @@ export async function mealsRoutes(app: FastifyInstance) {
       reply.status(204).send()
     },
   )
+
+  app.get(
+    '/metrics',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const { sessionId } = request.cookies
+
+      const user = await knex('users')
+        .where({ session_id: sessionId })
+        .select()
+        .first()
+
+      const meals = await knex('meals')
+        .where({ user_id: user.id })
+        .orderBy('date', 'desc')
+
+      const mealsOnDiet = await knex('meals')
+        .where({ user_id: user.id, is_on_diet: 1 })
+        .count('id', { as: 'total' })
+        .first()
+
+      const mealsOffDiet = await knex('meals')
+        .where({ user_id: user.id, is_on_diet: 0 })
+        .count('id', { as: 'total' })
+        .first()
+
+      // Reduce é um acumulador sobre um array
+      const { bestOnDietSequence } = meals.reduce(
+        (acc, meal) => {
+          // lógica de sequencia de dieta
+          if (meal.is_on_diet) {
+            acc.currentSequence += 1
+          } else {
+            acc.currentSequence = 0
+          }
+
+          // Lógica da melhor sequencia
+          if (acc.currentSequence > acc.bestOnDietSequence) {
+            acc.bestOnDietSequence = acc.currentSequence
+          }
+
+          // Acumulador
+          return acc
+        },
+        // Valor inicial
+        { bestOnDietSequence: 0, currentSequence: 0 },
+      )
+
+      return reply.status(200).send({
+        totalMeals: meals.length,
+        totalMealsOnDiet: mealsOnDiet?.total,
+        totalMealsOffDiet: mealsOffDiet?.total,
+        bestOnDietSequence,
+      })
+    },
+  )
 }
