@@ -1,6 +1,6 @@
 # Daily Diet API
 
-Esse projeto foi realizado a partir de um desenvolvimento no qual foi passado 
+Esse projeto foi realizado a partir de um dasafio no qual foi passado 
 as regras de negócio e uma contextualização de como seria utilizado esse sistema,
 segue abaixo as regras da aplicação
 
