@@ -3,7 +3,7 @@ Regras da Aplicação
 - [x] Deve ser possível criar um usuário;
 - [x] Deve ser possível identificar o usuário entre as requisições;
 - [x] Deve ser possível registrar uma refeição feita,, com as seguintes informações:
-  ~As refeições devem ser relacionadas a um usuário~
+  _As refeições devem ser relacionadas a um usuário_
   -- Nome;
   -- Descrição;
   -- Data e Hora;
